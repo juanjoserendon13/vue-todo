@@ -1,10 +1,8 @@
 <template>
-  <div class="todo-item" v-bind:class="{'is-complete':todo.completed}">
-    <p>
-      <input type="checkbox" v-on:change="markComplete">
-      {{todo.title}}
-      <button class="del" @click="$emit('del-todo', todo.id)">x</button>
-    </p>
+  <div class="todo-item">
+    <input type="checkbox" v-on:change="markComplete">
+    <p v-bind:class="{'is-complete':todo.completed}">{{todo.title}}</p>
+    <button class="del" v-on:click="$emit('del-todo', todo.id)">x</button>
   </div>
 </template>
 
@@ -22,6 +20,8 @@ export default {
 
 <style scoped>
   .todo-item {
+    display: flex;
+    align-items: center;
     background: #f4f4f4;
     padding: 1rem;
     border-bottom: 0.1rem #ccc dotted;
@@ -36,6 +36,6 @@ export default {
     padding: 0.5rem 0.9rem;
     border-radius: 50%;
     cursor: pointer;
-    float: right;
+   margin-left: auto;
   }
 </style>
