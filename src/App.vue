@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import fetch from 'isomorphic-fetch'
 import Header from './components/layout/Header';
 import Todos from './components/Todos';
 import AddTodo from './components/AddTodo';
@@ -21,21 +22,7 @@ export default {
   data() {
     return {
       todos: [
-        {
-          id: 1,
-          title: "Todo One",
-          completed: false
-        },
-        {
-          id: 2,
-          title: "Todo Two",
-          completed: true
-        },
-        {
-          id: 3,
-          title: "Todo Three",
-          completed: false
-        }
+
       ]
     }
   },
@@ -43,8 +30,33 @@ export default {
     deleteTodo(id) {
       this.todos =  this.todos.filter(t => t.id !== id);
     },
-    addTodo(todo) {
-      this.todos = [...this.todos, todo];
+    async addTodo(newTodo) {
+      const {title, completed} = newTodo;
+      try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/todos', 
+        {
+          method: 'POST',
+          body: JSON.stringify({title,completed}),
+          headers:{
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      const todoCreated = await response.json();
+      this.todos = [...this.todos, todoCreated];
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  },
+  async created() {
+    // This will be fire as soon as the component get mounted
+    try {
+      const response = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=5');
+      const data = await response.json();
+      this.todos = data;
+    } catch (error) {
+      console.log(error);
     }
   }
 }
