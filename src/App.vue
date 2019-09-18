@@ -11,7 +11,7 @@ import fetch from 'isomorphic-fetch'
 import Header from './components/layout/Header';
 import Todos from './components/Todos';
 import AddTodo from './components/AddTodo';
-
+const BASEURL = 'https://jsonplaceholder.typicode.com/todos';
 export default {
   name: 'app',
   components: {
@@ -27,13 +27,23 @@ export default {
     }
   },
   methods: {
-    deleteTodo(id) {
+    async deleteTodo(id) {
+      try {
+        const response = await fetch(`${BASEURL}/${id}`, 
+        {
+          method: 'DELETE',
+        }
+      );
+      const todoDeleted = await response.json();
       this.todos =  this.todos.filter(t => t.id !== id);
+      } catch (error) {
+        console.log(error);
+      }
     },
     async addTodo(newTodo) {
       const {title, completed} = newTodo;
       try {
-        const response = await fetch('https://jsonplaceholder.typicode.com/todos', 
+        const response = await fetch(BASEURL, 
         {
           method: 'POST',
           body: JSON.stringify({title,completed}),
@@ -52,7 +62,7 @@ export default {
   async created() {
     // This will be fire as soon as the component get mounted
     try {
-      const response = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=5');
+      const response = await fetch(`${BASEURL}?_limit=5`);
       const data = await response.json();
       this.todos = data;
     } catch (error) {
